@@ -286,7 +286,7 @@ it("throws when validateFunc is not provided", () => {
     }
 ].forEach(({ description, authorization, url, method }) => {
     it(description, async() => {
-        const request = { method: method, url: url, headers: { authorization: authorization } };
+        const request = { method, url, headers: { authorization } };
         const res = await server.inject(request);
         expect(res.statusCode).to.equal(200);
         expect(res.result).to.equal("success");
@@ -335,7 +335,7 @@ it("returns 401 error with bearer token type of object (invalid token)", async()
 ["/basic_validate_error", "/boom_validate_error"]
 .forEach((url) => {
     it("returns 500 when strategy returns a regular object to validateFunc", async() => {
-        const request = { method: "GET", url: url, headers: { authorization: "Bearer 12345678" } };
+        const request = { method: "GET", url, headers: { authorization: "Bearer 12345678" } };
         const res = await server.inject(request);
 
         expect(res.statusCode).to.equal(500);
