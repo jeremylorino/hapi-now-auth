@@ -82,12 +82,11 @@ const artifactsValidateFunc = (request, token, callback) => {
 
 let server = Hapi.server({ debug: false });
 
-before(async () => {
+before(async() => {
 
     try {
         await server.register(require("../"));
-    }
-    catch (err){
+    } catch (err) {
         expect(err).to.not.exist();
     }
 
@@ -220,7 +219,7 @@ before(async () => {
         { method: "GET", path: "/jwt_with_options", handler: defaultHandler, options: { auth: "jwt_with_options" } },
         { method: "GET", path: "/jwt_with_token_type", handler: defaultHandler, options: { auth: "jwt_with_token_type" } },
         { method: "POST", path: "/basic", handler: defaultHandler, options: { auth: "default" } },
-        { method: "POST", path: "/basic_default_auth", handler: defaultHandler, options: { } },
+        { method: "POST", path: "/basic_default_auth", handler: defaultHandler, options: {} },
         { method: "GET", path: "/basic_named_token", handler: defaultHandler, options: { auth: "default_named_access_token" } },
         { method: "GET", path: "/basic_validate_error", handler: defaultHandler, options: { auth: "with_error_strategy" } },
         { method: "GET", path: "/boom_validate_error", handler: defaultHandler, options: { auth: "boom_error_strategy" } },
@@ -252,8 +251,7 @@ it("throws when no bearer options provided", () => {
 
     try {
         server.auth.strategy("no_options", "hapi-now-auth", null);
-    }
-    catch (e) {
+    } catch (e) {
         expect(e.message).to.equal("Missing bearer auth options");
     }
 });
@@ -262,13 +260,12 @@ it("throws when validateFunc is not provided", () => {
 
     try {
         server.auth.strategy("no_options", "hapi-now-auth", { validate: "string" });
-    }
-    catch (e) {
+    } catch (e) {
         expect(e.details[0].message).to.equal("\"validate\" must be a Function");
     }
 });
 
-it("returns 200 and success with correct bearer token header set", async () => {
+it("returns 200 and success with correct bearer token header set", async() => {
 
     const request = { method: "POST", url: "/basic", headers: { authorization: "Bearer 12345678" } };
 
@@ -279,7 +276,7 @@ it("returns 200 and success with correct bearer token header set", async () => {
 });
 
 
-it("returns 200 and success with correct bearer token header set in multiple authorization header", async () => {
+it("returns 200 and success with correct bearer token header set in multiple authorization header", async() => {
 
     const request = { method: "GET", url: "/multiple_headers_enabled", headers: { authorization: "TestToken 12345678; FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018" } };
 
@@ -290,7 +287,7 @@ it("returns 200 and success with correct bearer token header set in multiple aut
 });
 
 
-it("returns 200 and success with correct bearer token header set in multiple places of the authorization header", async () => {
+it("returns 200 and success with correct bearer token header set in multiple places of the authorization header", async() => {
 
     const request = { method: "GET", url: "/multiple_headers_enabled", headers: { authorization: "FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; TestToken 12345678" } };
 
@@ -301,7 +298,7 @@ it("returns 200 and success with correct bearer token header set in multiple pla
 });
 
 
-it("returns 401 error with bearer token query param set by default", async () => {
+it("returns 401 error with bearer token query param set by default", async() => {
 
     const request = { method: "POST", url: "/basic?access_token=12345678" };
 
@@ -311,7 +308,7 @@ it("returns 401 error with bearer token query param set by default", async () =>
 });
 
 
-it("returns 401 error when no bearer token is set when one is required by default", async () => {
+it("returns 401 error when no bearer token is set when one is required by default", async() => {
 
     const request = { method: "POST", url: "/basic_default_auth" };
 
@@ -320,7 +317,7 @@ it("returns 401 error when no bearer token is set when one is required by defaul
 });
 
 
-it("returns 401 when bearer authorization header is not set", async () => {
+it("returns 401 when bearer authorization header is not set", async() => {
 
     const request = { method: "POST", url: "/basic", headers: { authorization: "definitelynotacorrecttoken" } };
 
@@ -330,7 +327,7 @@ it("returns 401 when bearer authorization header is not set", async () => {
 });
 
 
-it("returns 401 error with bearer token type of object (invalid token)", async () => {
+it("returns 401 error with bearer token type of object (invalid token)", async() => {
 
     const request = { method: "POST", url: "/basic", headers: { authorization: "Bearer {test: 1}" } };
 
@@ -340,7 +337,7 @@ it("returns 401 error with bearer token type of object (invalid token)", async (
 });
 
 
-it("returns 500 when strategy returns a regular object to validateFunc", async () => {
+it("returns 500 when strategy returns a regular object to validateFunc", async() => {
 
     const request = { method: "GET", url: "/basic_validate_error", headers: { authorization: "Bearer 12345678" } };
     const res = await server.inject(request);
@@ -350,7 +347,7 @@ it("returns 500 when strategy returns a regular object to validateFunc", async (
 });
 
 
-it("returns 500 when strategy returns a Boom error to validateFunc", async () => {
+it("returns 500 when strategy returns a Boom error to validateFunc", async() => {
 
     const request = { method: "GET", url: "/boom_validate_error", headers: { authorization: "Bearer 12345678" } };
     const res = await server.inject(request);
@@ -360,7 +357,7 @@ it("returns 500 when strategy returns a Boom error to validateFunc", async () =>
 });
 
 
-it("returns 401 handles when isValid false passed to validateFunc", async () => {
+it("returns 401 handles when isValid false passed to validateFunc", async() => {
 
     const request = { method: "GET", url: "/always_reject", headers: { authorization: "Bearer 12345678" } };
     const res = await server.inject(request);
@@ -377,7 +374,7 @@ it("returns 401 handles when isValid false passed to validateFunc", async () => 
 });
 
 
-it("returns 500 when no credentials passed to validateFunc", async () => {
+it("returns 500 when no credentials passed to validateFunc", async() => {
 
     const request = { method: "GET", url: "/no_credentials", headers: { authorization: "Bearer 12345678" } };
     const res = await server.inject(request);
@@ -386,7 +383,7 @@ it("returns 500 when no credentials passed to validateFunc", async () => {
 });
 
 
-it("returns a 401 on default auth with access_token query param renamed and set", async () => {
+it("returns a 401 on default auth with access_token query param renamed and set", async() => {
 
     const requestQueryToken = { method: "GET", url: "/basic_named_token?my_access_token=12345678" };
     const res = await server.inject(requestQueryToken);
@@ -395,7 +392,7 @@ it("returns a 401 on default auth with access_token query param renamed and set"
 });
 
 
-it("doesn\"t affect header auth and will return 200 and success when specifying custom access_token name", async () => {
+it("doesn\"t affect header auth and will return 200 and success when specifying custom access_token name", async() => {
 
     const requestQueryToken = { method: "GET", url: "/basic_named_token", headers: { authorization: "Bearer 12345678" } };
     const res = await server.inject(requestQueryToken);
@@ -405,7 +402,7 @@ it("doesn\"t affect header auth and will return 200 and success when specifying 
 });
 
 
-it("allows you to enable auth by query token", async () => {
+it("allows you to enable auth by query token", async() => {
 
     const requestQueryToken = { method: "GET", url: "/query_token_enabled?access_token=12345678" };
     const res = await server.inject(requestQueryToken);
@@ -414,7 +411,7 @@ it("allows you to enable auth by query token", async () => {
     expect(res.result).to.equal("success");
 });
 
-it("allows you to enable auth by query token and rename the query param", async () => {
+it("allows you to enable auth by query token and rename the query param", async() => {
 
     const requestQueryToken = { method: "GET", url: "/query_token_enabled_renamed?my_access_token=12345678" };
     const res = await server.inject(requestQueryToken);
@@ -423,7 +420,7 @@ it("allows you to enable auth by query token and rename the query param", async 
     expect(res.result).to.equal("success");
 });
 
-it("allows you to enable auth by query token and still use header", async () => {
+it("allows you to enable auth by query token and still use header", async() => {
 
     const requestQueryToken = { method: "GET", url: "/query_token_enabled_renamed", headers: { authorization: "Bearer 12345678" } };
     const res = await server.inject(requestQueryToken);
@@ -433,16 +430,16 @@ it("allows you to enable auth by query token and still use header", async () => 
 });
 
 
-it("allows you to disable auth by query token", async () => {
+it("allows you to disable auth by query token", async() => {
 
-    const requestHeaderToken  = { method: "GET", url: "/query_token_disabled?access_token=12345678" };
+    const requestHeaderToken = { method: "GET", url: "/query_token_disabled?access_token=12345678" };
     const res = await server.inject(requestHeaderToken);
 
     expect(res.statusCode).to.equal(401);
 });
 
 
-it("disables multiple auth headers by default", async () => {
+it("disables multiple auth headers by default", async() => {
 
     const request = { method: "POST", url: "/basic", headers: { authorization: "RandomAuthHeader 1234; TestToken 12345678" } };
     const res = await server.inject(request);
@@ -450,7 +447,7 @@ it("disables multiple auth headers by default", async () => {
     expect(res.statusCode).to.equal(401);
 });
 
-it("allows you to enable multiple auth headers", async () => {
+it("allows you to enable multiple auth headers", async() => {
 
     const requestHeaderToken = { method: "GET", url: "/multiple_headers_enabled", headers: { authorization: "RandomAuthHeader 1234; TestToken 12345678" } };
     const res = await server.inject(requestHeaderToken);
@@ -459,7 +456,7 @@ it("allows you to enable multiple auth headers", async () => {
 });
 
 
-it("return unauthorized when no auth info and multiple headers disabled", async () => {
+it("return unauthorized when no auth info and multiple headers disabled", async() => {
 
     const requestHeaderToken = { method: "POST", url: "/basic", headers: { authorization: "x" } };
     const res = await server.inject(requestHeaderToken);
@@ -468,7 +465,7 @@ it("return unauthorized when no auth info and multiple headers disabled", async 
 });
 
 
-it("return unauthorized when no auth info and multiple headers enabled", async () => {
+it("return unauthorized when no auth info and multiple headers enabled", async() => {
 
     const requestHeaderToken = { method: "GET", url: "/multiple_headers_enabled", headers: { authorization: "x" } };
     const res = await server.inject(requestHeaderToken);
@@ -477,7 +474,7 @@ it("return unauthorized when no auth info and multiple headers enabled", async (
 });
 
 
-it("return unauthorized when different token type is used", async () => {
+it("return unauthorized when different token type is used", async() => {
 
     const requestHeaderToken = { method: "GET", url: "/custom_token_type", headers: { authorization: "Bearer 12345678" } };
 
@@ -487,9 +484,9 @@ it("return unauthorized when different token type is used", async () => {
 });
 
 
-it("return 200 when correct token type is used", async () => {
+it("return 200 when correct token type is used", async() => {
 
-    const requestHeaderToken  = { method: "GET", url: "/custom_token_type", headers: { authorization: "Basic 12345678" } };
+    const requestHeaderToken = { method: "GET", url: "/custom_token_type", headers: { authorization: "Basic 12345678" } };
 
     const res = await server.inject(requestHeaderToken);
 
@@ -497,9 +494,9 @@ it("return 200 when correct token type is used", async () => {
 });
 
 
-it("accepts artifacts with credentials", async () => {
+it("accepts artifacts with credentials", async() => {
 
-    const requestHeaderToken  = { method: "GET", url: "/artifacts", headers: { authorization: "Bearer 12345678" } };
+    const requestHeaderToken = { method: "GET", url: "/artifacts", headers: { authorization: "Bearer 12345678" } };
 
     const res = await server.inject(requestHeaderToken);
 
@@ -507,16 +504,16 @@ it("accepts artifacts with credentials", async () => {
     expect(res.request.auth.artifacts.sampleArtifact).equal("artifact");
 });
 
-it("allows chaining of strategies", async () => {
+it("allows chaining of strategies", async() => {
 
-    const requestHeaderToken  = { method: "GET", url: "/chain", headers: { authorization: "Bearer 12345678" } };
+    const requestHeaderToken = { method: "GET", url: "/chain", headers: { authorization: "Bearer 12345678" } };
 
     const res = await server.inject(requestHeaderToken);
 
     expect(res.statusCode).to.equal(200);
 });
 
-it("does not allow an auth cookie by default", async () => {
+it("does not allow an auth cookie by default", async() => {
 
     const cookie = "my_access_token=12345678";
     const requestCookieToken = { method: "GET", url: "/basic_named_token", headers: { cookie } };
@@ -526,17 +523,17 @@ it("does not allow an auth cookie by default", async () => {
     expect(res.statusCode).to.equal(401);
 });
 
-it("allows you to enable auth by cookie token", async () => {
+it("allows you to enable auth by cookie token", async() => {
 
     const cookie = "access_token=12345678";
-    const requestCookieToken = { method: "GET", url: "/cookie_token_enabled", headers: { cookie }  };
+    const requestCookieToken = { method: "GET", url: "/cookie_token_enabled", headers: { cookie } };
     const res = await server.inject(requestCookieToken);
 
     expect(res.statusCode).to.equal(200);
     expect(res.result).to.equal("success");
 });
 
-it("will ignore cookie value if header auth provided", async () => {
+it("will ignore cookie value if header auth provided", async() => {
 
     const cookie = "my_access_token=12345678";
     const authorization = "Bearer 12345678";
@@ -547,19 +544,20 @@ it("will ignore cookie value if header auth provided", async () => {
     expect(res.statusCode).to.equal(200);
 });
 
-it("allows you to disable auth by cookie token", async () => {
+it("allows you to disable auth by cookie token", async() => {
 
     const cookie = "access_token=12345678";
-    const requestCookieToken  = { method: "GET", url: "/cookie_token_disabled", headers: { cookie }  };
+    const requestCookieToken = { method: "GET", url: "/cookie_token_disabled", headers: { cookie } };
     const res = await server.inject(requestCookieToken);
 
     expect(res.statusCode).to.equal(401);
 });
 
-it("allows you to use a custom unauthrozied function", async () => {
+it("allows you to use a custom unauthrozied function", async() => {
 
     const request = {
-        method: "GET", url: "/custom_unauthorized_func",
+        method: "GET",
+        url: "/custom_unauthorized_func",
         headers: { authorization: "definitelynotacorrecttoken" }
     };
 
@@ -568,7 +566,7 @@ it("allows you to use a custom unauthrozied function", async () => {
     expect(res.statusCode).to.equal(404);
 });
 
-it("returns 401 if no token is supplied", async () => {
+it("returns 401 if no token is supplied", async() => {
 
     const request = { method: "POST", url: "/basic", headers: { authorization: "Bearer" } };
 
@@ -577,7 +575,7 @@ it("returns 401 if no token is supplied", async () => {
     expect(res.statusCode).to.equal(401);
 });
 
-it("returns 401 if verifyJWT is supplied without key(s)", async () => {
+it("returns 401 if verifyJWT is supplied without key(s)", async() => {
 
     const request = { method: "GET", url: "/jwt_no_keychain", headers: { authorization: `Bearer ${jwt}` } };
 
@@ -586,7 +584,7 @@ it("returns 401 if verifyJWT is supplied without key(s)", async () => {
     expect(res.statusCode).to.equal(401);
 });
 
-it("returns 401 if JWT format is invalid", async () => {
+it("returns 401 if JWT format is invalid", async() => {
 
     const request = { method: "GET", url: "/jwt_invalid_format", headers: { authorization: "Bearer 123456" } };
 
@@ -595,7 +593,7 @@ it("returns 401 if JWT format is invalid", async () => {
     expect(res.statusCode).to.equal(401);
 });
 
-it("returns 401 if JWT keychain is invalid", async () => {
+it("returns 401 if JWT keychain is invalid", async() => {
 
     const request = { method: "GET", url: "/jwt_invalid_keychain", headers: { authorization: `Bearer ${jwt}` } };
 
@@ -604,7 +602,7 @@ it("returns 401 if JWT keychain is invalid", async () => {
     expect(res.statusCode).to.equal(401);
 });
 
-it("returns 200 if jwt token is supplied", async () => {
+it("returns 200 if jwt token is supplied", async() => {
 
     const request = { method: "GET", url: "/basic_jwt", headers: { authorization: `Bearer ${jwt}` } };
 
@@ -613,7 +611,7 @@ it("returns 200 if jwt token is supplied", async () => {
     expect(res.statusCode).to.equal(200);
 });
 
-it("returns 200 if jwt token is supplied with options", async () => {
+it("returns 200 if jwt token is supplied with options", async() => {
 
     const request = { method: "GET", url: "/jwt_with_options", headers: { authorization: `Bearer ${jwtAud}` } };
 
@@ -622,7 +620,7 @@ it("returns 200 if jwt token is supplied with options", async () => {
     expect(res.statusCode).to.equal(200);
 });
 
-it("returns 200 if jwt token is supplied with options", async () => {
+it("returns 200 if jwt token is supplied with options", async() => {
 
     const request = { method: "GET", url: "/jwt_with_token_type", headers: { authorization: `JWT ${jwtAud}` } };
 
