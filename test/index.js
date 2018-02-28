@@ -265,36 +265,32 @@ it("throws when validateFunc is not provided", () => {
     }
 });
 
-it("returns 200 and success with correct bearer token header set", async() => {
-
-    const request = { method: "POST", url: "/basic", headers: { authorization: "Bearer 12345678" } };
-
-    const res = await server.inject(request);
-
-    expect(res.statusCode).to.equal(200);
-    expect(res.result).to.equal("success");
-});
-
-
-it("returns 200 and success with correct bearer token header set in multiple authorization header", async() => {
-
-    const request = { method: "GET", url: "/multiple_headers_enabled", headers: { authorization: "TestToken 12345678; FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018" } };
-
-    const res = await server.inject(request);
-
-    expect(res.statusCode).to.equal(200);
-    expect(res.result).to.equal("success");
-});
-
-
-it("returns 200 and success with correct bearer token header set in multiple places of the authorization header", async() => {
-
-    const request = { method: "GET", url: "/multiple_headers_enabled", headers: { authorization: "FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; TestToken 12345678" } };
-
-    const res = await server.inject(request);
-
-    expect(res.statusCode).to.equal(200);
-    expect(res.result).to.equal("success");
+[
+    {
+        description: "returns 200 and success with correct bearer token header set",
+        authorization: "Bearer 12345678",
+        url: "/basic",
+        method: "POST"
+    },
+    {
+        description: "returns 200 and success with correct bearer token header set in multiple authorization header",
+        authorization: "TestToken 12345678; FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018",
+        url: "/multiple_headers_enabled",
+        method: "GET"
+    },
+    {
+        description: "returns 200 and success with correct bearer token header set in multiple places of the authorization header",
+        authorization: "FD AF6C74D1-BBB2-4171-8EE3-7BE9356EB018; TestToken 12345678",
+        url: "/multiple_headers_enabled",
+        method: "GET"
+    }
+].forEach(({ description, authorization, url, method }) => {
+    it(description, async() => {
+        const request = { method: method, url: url, headers: { authorization: authorization } };
+        const res = await server.inject(request);
+        expect(res.statusCode).to.equal(200);
+        expect(res.result).to.equal("success");
+    });
 });
 
 
@@ -336,24 +332,15 @@ it("returns 401 error with bearer token type of object (invalid token)", async()
     expect(res.statusCode).to.equal(401);
 });
 
+["/basic_validate_error", "/boom_validate_error"]
+.forEach((url) => {
+    it("returns 500 when strategy returns a regular object to validateFunc", async() => {
+        const request = { method: "GET", url: url, headers: { authorization: "Bearer 12345678" } };
+        const res = await server.inject(request);
 
-it("returns 500 when strategy returns a regular object to validateFunc", async() => {
-
-    const request = { method: "GET", url: "/basic_validate_error", headers: { authorization: "Bearer 12345678" } };
-    const res = await server.inject(request);
-
-    expect(res.statusCode).to.equal(500);
-    expect(JSON.stringify(res.result)).to.equal("{\"statusCode\":500,\"error\":\"Internal Server Error\",\"message\":\"An internal server error occurred\"}");
-});
-
-
-it("returns 500 when strategy returns a Boom error to validateFunc", async() => {
-
-    const request = { method: "GET", url: "/boom_validate_error", headers: { authorization: "Bearer 12345678" } };
-    const res = await server.inject(request);
-
-    expect(res.statusCode).to.equal(500);
-    expect(JSON.stringify(res.result)).to.equal("{\"statusCode\":500,\"error\":\"Internal Server Error\",\"message\":\"An internal server error occurred\"}");
+        expect(res.statusCode).to.equal(500);
+        expect(JSON.stringify(res.result)).to.equal("{\"statusCode\":500,\"error\":\"Internal Server Error\",\"message\":\"An internal server error occurred\"}");
+    });
 });
 
 
