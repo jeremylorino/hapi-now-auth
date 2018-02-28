@@ -588,7 +588,7 @@ it("returns 401 if verifyJWT is supplied without key(s)", async () => {
 
 it("returns 401 if JWT format is invalid", async () => {
 
-    const request = { method: "GET", url: "/jwt_invalid_format", headers: { authorization: `Bearer 123456` } };
+    const request = { method: "GET", url: "/jwt_invalid_format", headers: { authorization: "Bearer 123456" } };
 
     const res = await server.inject(request);
 
