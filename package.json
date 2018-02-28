@@ -9,6 +9,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "lab -a code -t 100 -L -r lcov | ./node_modules/.bin/coveralls",
+    "pretest": "npm i",
     "test-cover": "lab -a code -r html -o coverage.html"
   },
   "keywords": [
